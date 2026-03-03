@@ -69,19 +69,49 @@
     showFlash();
 
     canvas.toBlob(function (blob) {
-      if (!blob) return;
+      if (!blob) {
+        setStatus('캡처 실패');
+        return;
+      }
       const name = 'scan_' + new Date().toISOString().slice(0, 19).replace(/[-:T]/g, '') + '.png';
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = name;
-      a.click();
-      URL.revokeObjectURL(url);
-      setStatus('SAVED • ' + name);
-      setTimeout(function () {
-        setStatus('READY • SCANNING');
-      }, 2000);
+      const file = new File([blob], name, { type: 'image/png' });
+
+      // 모바일: 공유 메뉴로 저장 (갤러리/사진 앱에 저장 가능)
+      if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+        navigator.share({
+          files: [file],
+          title: '스캔 사진',
+          text: name
+        }).then(function () {
+          setStatus('저장됨 (공유 완료)');
+          setTimeout(function () { setStatus('READY • SCANNING'); }, 2000);
+        }).catch(function (err) {
+          if (err.name !== 'AbortError') tryDownload(blob, name);
+        });
+        return;
+      }
+
+      tryDownload(blob, name);
+      showFlash();
     }, 'image/png', 0.95);
+  }
+
+  function tryDownload(blob, name) {
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = name;
+    a.style.display = 'none';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(function () {
+      URL.revokeObjectURL(url);
+    }, 3000);
+    setStatus('SAVED • ' + name);
+    setTimeout(function () {
+      setStatus('READY • SCANNING');
+    }, 2000);
   }
 
   btnSave.addEventListener('click', capturePhoto);
