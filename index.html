@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>공간 스캔 | CYBER SCAN</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="scanner-wrap">
+    <!-- 카메라 영역 -->
+    <video id="camera" autoplay playsinline muted></video>
+
+    <!-- 캡처용 캔버스 (숨김) -->
+    <canvas id="captureCanvas"></canvas>
+
+    <!-- 사이버틱 오버레이 -->
+    <div class="overlay">
+      <div class="corners">
+        <span class="corner tl"></span>
+        <span class="corner tr"></span>
+        <span class="corner bl"></span>
+        <span class="corner br"></span>
+      </div>
+      <div class="scan-line"></div>
+      <div class="grid"></div>
+      <div class="crosshair"></div>
+      <div class="hud">
+        <span class="label">SCANNING</span>
+        <span class="status" id="status">CAMERA INIT...</span>
+      </div>
+    </div>
+  </div>
+
+  <button type="button" class="btn-save" id="btnSave">
+    <span class="btn-text">저장하기</span>
+    <span class="btn-glow"></span>
+  </button>
+
+  <script src="main.js"></script>
+</body>
+</html>
